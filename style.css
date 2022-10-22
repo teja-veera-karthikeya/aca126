@@ -35,3 +35,7 @@ body{
     font-size: 23px;
     margin: 15px;
 }
+canvas{
+    border:white solid;
+    border-radius: 21px;
+}
