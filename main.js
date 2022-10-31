@@ -1,36 +1,64 @@
-leftWristY=0;
-leftWristX=0;
-rightWristY=0;
-rightWristX=0;
-function preload(){
-    song1 = loadSound("music.mp3");
-    song2 = loadSound("music2.mp3");
-}
-function setup(){
-    canvas=createCanvas(600,500);
-    canvas.center();
-    canvas.position(700,300)
+song2="";
+song1="";
+rightWrist_x = 0;
+rightWrist_y = 0;
+leftWrist_x = 0;
+leftWrist_y = 0;
+scoreleftWrist = 0;
+song_status = "";
 
-    video=createCapture(VIDEO);
+function setup(){
+    canvas = createCanvas(600,530);
+    canvas.center();
+    canvas.position(700,300);
+
+    video = createCapture(VIDEO);
     video.hide();
 
-    poseNet=ml5.poseNet(video,modelloaded)
-    poseNet.on('pose',gotposes)
+    poseNet = ml5.poseNet(video,modelLoaded);
+    poseNet.on('pose',gotposes);
 }
-function modelloaded(){
-    console.log("PoseNet is intailized")
+
+function preload(){
+    song2 = loadSound("music2.mp3");
+    song1 = loadSound("music.mp3");
 }
-function gotposes(results){
-    if(results.length>0){
-        console.log(results)
-        leftWristY=results[0].pose.leftWrist.y;
-        leftWristX=results[0].pose.leftWrist.x;
-        console.log("leftWristY = "+leftWristY+"leftWristX = "+leftWristX)
-        rightWristY=results[0].pose.rightWrist.y;
-        rightWristX=results[0].pose.rightWrist.x;
-        console.log("rightWristY = "+rightWristY+"rightWristX = "+rightWristX)
+
+function draw(){
+    image(video,0,0,600,530);
+
+    fill("#ff0000");
+    stroke("#ff0000");
+
+    song_status = song2.isPlaying();
+    console.log(song_status);
+
+    if(scoreleftWrist > 0.2){
+        circle(leftWrist_x,leftWrist_y,20);
+        song1.stop();
+        if(song_status == false){
+            song2.play();
+        }
     }
 }
-function draw(){
-    image(video,0,0,600,500);
+
+function modelLoaded(){
+    console.log("poseNet Is Initialized");
+}
+
+function gotposes(results){
+    if(results.length > 0){
+        console.log(results);
+
+        scoreleftWrist = results[0].pose.keypoints[9].score;
+        console.log(scoreleftWrist);
+
+        leftWrist_x = results[0].pose.leftWrist.x;
+        leftWrist_y = results[0].pose.leftWrist.y;
+        console.log("leftWrist_x = "+leftWrist_x+" leftWrist_y = "+leftWrist_y);
+
+        rightWrist_x = results[0].pose.rightWrist.x;
+        rightWrist_y = results[0].pose.rightWrist.y;
+        console.log("rightWrist_x = "+rightWrist_x+" rightWrist_y = "+rightWrist_y);
+    }
 }
