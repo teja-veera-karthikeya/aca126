@@ -5,6 +5,7 @@ rightWrist_y = 0;
 leftWrist_x = 0;
 leftWrist_y = 0;
 scoreleftWrist = 0;
+scoreRightWrist = 0;
 song_status = "";
 
 function setup(){
@@ -30,16 +31,25 @@ function draw(){
     fill("#ff0000");
     stroke("#ff0000");
 
-    song_status = song2.isPlaying();
+    song_status1 = song1.isPlaying();
+    song_status2 = song2.isPlaying();
     console.log(song_status);
 
     if(scoreleftWrist > 0.2){
         circle(leftWrist_x,leftWrist_y,20);
         song1.stop();
-        if(song_status == false){
+        if(song_status2 == false){
             song2.play();
         }
     }
+    if(scoreRightWrist>0.2){
+        circle(rightWrist_x,rightWrist_y,20);
+        song2.stop()
+        if(song_status1 == false){
+            song1.play()
+        }
+    }
+
 }
 
 function modelLoaded(){
@@ -49,9 +59,9 @@ function modelLoaded(){
 function gotposes(results){
     if(results.length > 0){
         console.log(results);
-
+        scoreRightWrist = results[0].pose.keypoints[10].score;
         scoreleftWrist = results[0].pose.keypoints[9].score;
-        console.log(scoreleftWrist);
+        console.log(scoreleftWrist + scoreRightWrist);
 
         leftWrist_x = results[0].pose.leftWrist.x;
         leftWrist_y = results[0].pose.leftWrist.y;
